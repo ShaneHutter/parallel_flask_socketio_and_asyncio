@@ -1,8 +1,11 @@
 if( socket ){
     socket.on(
-        "cmd",
-        function( cmd ){
-            console.log( cmd )
+        "foobar",
+        function( foobar ){
+            console.log( foobar );
+            document.getElementById( "foobar" ).innerHTML = foobar ;
         }
-    )
+    );
+
+    socket.emit( "foobar" , "init" );
 }

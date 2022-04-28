@@ -9,6 +9,9 @@
     * Dynamically load scripts, or change site details via the cli
 """
 
+from eventlet   import monkey_patch
+monkey_patch()
+
 from asyncio    import get_running_loop, start_unix_server, coroutine , run
 
 from threading  import Thread
@@ -25,6 +28,8 @@ from flask_compress import Compress
 from time   import sleep
 from os     import unlink
 
+from numpy import broadcast
+
 
 
 ### App setup
@@ -39,13 +44,16 @@ Compress( app )
 # Socket IO setup
 socketio = SocketIO(
     app,
+    async_mode = 'eventlet',
     engineio_logger = True,
     )
 
 
 # Serverside SocketIO
-def handle_cmd( cmd ):
-    print( cmd )
+@socketio.on( "foobar" )
+def handle_cmd( foobar ):
+    socketio.emit( "foobar" , foobar , broadcast = True )
+
 
 # Async Unix socket listen
 @coroutine
@@ -73,4 +81,5 @@ def index():
 # Main for non-prod tests
 if __name__ == '__main__':
     Thread( target = run , args = [ start_usock() ] ).start()
-    Thread( target = socketio.run , args = [ app ] ).start()
+    #Thread( target = socketio.run , args = [ app ] ).start()
+    socketio.run( app )
