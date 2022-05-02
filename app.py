@@ -12,24 +12,14 @@
 from eventlet   import monkey_patch
 monkey_patch()
 
-from asyncio    import get_running_loop, start_unix_server, coroutine , run
+from asyncio    import start_unix_server, coroutine , run
 
 from threading  import Thread
 
-from flask          import (
-    Flask, 
-    redirect,   request,    render_template,
-    url_for,    session,
-    )
-from flask_socketio import SocketIO, emit
+from flask          import Flask, render_template
+from flask_socketio import SocketIO
 from flask_session  import Session
 from flask_compress import Compress
-
-from time   import sleep
-from os     import unlink
-
-from numpy import broadcast
-
 
 
 ### App setup
@@ -79,7 +69,8 @@ def index():
     return render_template( "index.jinja" )
 
 # Main for non-prod tests
-if __name__ == '__main__':
+if __name__ == 'app':
+    print( "gunicorn runs me" )
     Thread( target = run , args = [ start_usock() ] ).start()
     #Thread( target = socketio.run , args = [ app ] ).start()
-    socketio.run( app )
+    #socketio.run( app )
